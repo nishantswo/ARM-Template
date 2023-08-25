@@ -1,0 +1,1766 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "metadata": {
+        "_generator": {
+            "name": "bicep",
+            "version": "0.13.1.58284",
+            "templateHash": "15829433356214502237"
+        }
+    },
+    "parameters": {
+        "CosmosDBname": {
+            "type": "string",
+            "defaultValue": "cosmo-1-avip-nizdt-01"
+        },
+        "CosmosDBlocationName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "Redis_Name": {
+            "type": "String",
+            "defaultValue": "redis-n-avip-nizdt-01",
+            "metadata": {
+                "description": "Redis Cache Name"
+            }
+        },
+        "EventHubprojectName": {
+            "type": "string",
+            "defaultValue": "ehub-n-avip-nizit-01",
+            "metadata": {
+                "description": "Specifies a project name that is used to generate the Event Hub name and the Namespace name."
+            }
+        },
+        "eventHubSku": {
+            "type": "string",
+            "defaultValue": "Standard",
+            "allowedValues": [
+                "Basic",
+                "Standard"
+            ],
+            "metadata": {
+                "description": "Specifies the messaging tier for Event Hub Namespace."
+            }
+        },
+        "PostgreSQLserverName": {
+            "type": "string",
+            "defaultValue": "pgsql-1-avip-nizdt-01",
+            "metadata": {
+                "description": "Server Name for Azure Database for PostgreSQL"
+            }
+        },
+        "administratorLogin": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "Database administrator login name"
+            }
+        },
+        "administratorLoginPassword": {
+            "type": "securestring",
+            "minLength": 8,
+            "metadata": {
+                "description": "Database administrator password"
+            }
+        },
+        "skuCapacity": {
+            "type": "int",
+            "defaultValue": 2,
+            "metadata": {
+                "description": "Azure Database for PostgreSQL compute capacity in vCores (2,4,8,16,32)"
+            }
+        },
+        "skuName": {
+            "type": "string",
+            "defaultValue": "GP_Gen5_2",
+            "metadata": {
+                "description": "Azure Database for PostgreSQL sku name "
+            }
+        },
+        "skuSizeMB": {
+            "type": "int",
+            "defaultValue": 51200,
+            "metadata": {
+                "description": "Azure Database for PostgreSQL Sku Size "
+            }
+        },
+        "skuTier": {
+            "type": "string",
+            "defaultValue": "GeneralPurpose",
+            "allowedValues": [
+                "Basic",
+                "GeneralPurpose",
+                "MemoryOptimized"
+            ],
+            "metadata": {
+                "description": "Azure Database for PostgreSQL pricing tier"
+            }
+        },
+        "skuFamily": {
+            "type": "string",
+            "defaultValue": "Gen5",
+            "metadata": {
+                "description": "Azure Database for PostgreSQL sku family"
+            }
+        },
+        "postgresqlVersion": {
+            "type": "string",
+            "defaultValue": "11",
+            "allowedValues": [
+                "9.5",
+                "9.6",
+                "10",
+                "10.0",
+                "10.2",
+                "11"
+            ],
+            "metadata": {
+                "description": "PostgreSQL version"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "backupRetentionDays": {
+            "type": "int",
+            "defaultValue": 7,
+            "metadata": {
+                "description": "PostgreSQL Server backup retention days"
+            }
+        },
+        "storageAccount_name": {
+            "type": "string",
+            "defaultValue": "stornavipnizdt01",
+            "metadata": {
+                "description": "The storage account name"
+            }
+        },
+        "storageAccount_sku_name": {
+            "type": "string",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_GRS",
+                "Standard_RAGRS",
+                "Standard_ZRS",
+                "Premium_LRS"
+            ],
+            "metadata": {
+                "description": "One of the supported SKUs: Standard_LRS, Standard_GRS, Standard_RAGRS, Standard_ZRS, Premium_LRS"
+            },
+            "defaultValue": "Standard_GRS"
+        },
+        "storageAccount_access_tier": {
+            "type": "string",
+            "allowedValues": [
+                "Cool",
+                "Hot"
+            ],
+            "metadata": {
+                "description": "One of the supported tiers: Cool or Hot"
+            },
+            "defaultValue": "Cool"
+        },
+        "storageAccount_kind": {
+            "type": "string",
+            "allowedValues": [
+                "Storage",
+                "StorageV2",
+                "BlobStorage"
+            ],
+            "metadata": {
+                "description": "One of the supported kinds: Storage, StorageV2, BlobStorage"
+            },
+            "defaultValue": "StorageV2"
+        },
+        "storageContainer_name": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the storage container"
+            }
+        },
+        "vNetHubName": {
+            "type": "string",
+            "defaultValue": "vnet-n-avip-nez-01",
+            "metadata": {
+                "description": "The name of HUB Virtual Network"
+            }
+        },
+        "vNetHubPrefix": {
+            "type": "string",
+            "defaultValue": "100.0.0.0/16",
+            "metadata": {
+                "description": "Virtual Network Address Prefix"
+            }
+        },
+        "vNetSpokeName": {
+            "type": "string",
+            "defaultValue": "vnet-n-avip-niz-01",
+            "metadata": {
+                "description": "Virtual Network Name"
+            }
+        },
+        "aksSubnetName": {
+            "type": "string",
+            "defaultValue": "AksSubnet",
+            "metadata": {
+                "description": "Subnet Name"
+            }
+        },
+        "vmSubnetName": {
+            "type": "string",
+            "defaultValue": "VmSubnet",
+            "metadata": {
+                "description": "Specifies the name of the subnet which contains the virtual machine."
+            }
+        },
+        "vmSubnetAddressPrefix": {
+            "type": "string",
+            "defaultValue": "10.1.0.0/16",
+            "metadata": {
+                "description": "Specifies the address prefix of the subnet which contains the virtual machine."
+            }
+        },
+        "applicationGatewaySubnetName": {
+            "type": "string",
+            "defaultValue": "AppGatewaySubnet",
+            "metadata": {
+                "description": "Specifies the name of the subnet which contains the the Application Gateway."
+            }
+        },
+        "vNetSpokePrefix": {
+            "type": "string",
+            "defaultValue": "10.0.0.0/8",
+            "metadata": {
+                "description": "Virtual Network Address Prefix"
+            }
+        },
+        "aksSubnetAddressPrefix": {
+            "type": "string",
+            "defaultValue": "10.0.0.0/16",
+            "metadata": {
+                "description": "Subnet Address Prefix"
+            }
+        },
+        "applicationGatewaySubnetAddressPrefix": {
+            "type": "string",
+            "defaultValue": "10.2.0.0/24",
+            "metadata": {
+                "description": "Specifies the address prefix of the subnet which contains the Application Gateway."
+            }
+        },
+        "aksClusterName": {
+            "defaultValue": "aks-1-avip-nizat-01",
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the name of the AKS cluster."
+            }
+        },
+        "aksClusterDnsPrefix": {
+            "defaultValue": "[parameters('aksClusterName')]",
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the DNS prefix specified when creating the managed cluster."
+            }
+        },
+        "aksClusterTags": {
+            "defaultValue": {
+                "resourceType": "AKS Cluster",
+                "createdBy": "ARM Template"
+            },
+            "type": "object",
+            "metadata": {
+                "description": "Specifies the tags of the AKS cluster."
+            }
+        },
+        "aksClusterNetworkPlugin": {
+            "defaultValue": "azure",
+            "type": "string",
+            "allowedValues": [
+                "azure",
+                "kubenet"
+            ],
+            "metadata": {
+                "description": "Specifies the network plugin used for building Kubernetes network. - azure or kubenet."
+            }
+        },
+        "aksClusterNetworkPolicy": {
+            "defaultValue": "azure",
+            "type": "string",
+            "allowedValues": [
+                "azure",
+                "calico"
+            ],
+            "metadata": {
+                "description": "Specifies the network policy used for building Kubernetes network. - calico or azure"
+            }
+        },
+        "aksClusterLoadBalancerSku": {
+            "defaultValue": "standard",
+            "type": "string",
+            "allowedValues": [
+                "basic",
+                "standard"
+            ],
+            "metadata": {
+                "description": "Specifies the sku of the load balancer used by the virtual machine scale sets used by nodepools."
+            }
+        },
+        "aksClusterOutboundType": {
+            "defaultValue": "loadBalancer",
+            "type": "string",
+            "allowedValues": [
+                "loadBalancer",
+                "userDefinedRouting"
+            ],
+            "metadata": {
+                "description": "Specifies outbound (egress) routing method. - loadBalancer or userDefinedRouting."
+            }
+        },
+        "aksClusterSkuTier": {
+            "type": "string",
+            "defaultValue": "Paid",
+            "allowedValues": [
+                "Paid",
+                "Free"
+            ],
+            "metadata": {
+                "description": "Specifies the tier of a managed cluster SKU: Paid or Free"
+            }
+        },
+        "aksClusterKubernetesVersion": {
+            "type": "string",
+            "defaultValue": "1.26.3",
+            "metadata": {
+                "description": "Specifies the version of Kubernetes specified when creating the managed cluster."
+            }
+        },
+        "aksClusterAdminUsername": {
+            "type": "string",
+            "defaultValue": "azureuser",
+            "metadata": {
+                "description": "Specifies the administrator username of Linux virtual machines."
+            }
+        },
+        "aksClusterSshPublicKey": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the SSH RSA public key string for the Linux nodes."
+            }
+        },
+        "aadEnabled": {
+            "defaultValue": false,
+            "type": "bool",
+            "metadata": {
+                "description": "Specifies whether enabling AAD integration."
+            }
+        },
+        "aadProfileTenantId": {
+            "defaultValue": "[subscription().tenantId]",
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the tenant id of the Azure Active Directory used by the AKS cluster for authentication."
+            }
+        },
+        "aadProfileAdminGroupObjectIDs": {
+            "defaultValue": [],
+            "type": "array",
+            "metadata": {
+                "description": "Specifies the AAD group object IDs that will have admin role of the cluster."
+            }
+        },
+        "aksClusterEnablePrivateCluster": {
+            "defaultValue": false,
+            "type": "bool",
+            "metadata": {
+                "description": "Specifies whether to create the cluster as a private cluster or not."
+            }
+        },
+        "aadProfileManaged": {
+            "defaultValue": false,
+            "type": "bool",
+            "metadata": {
+                "description": "Specifies whether to enable managed AAD integration."
+            }
+        },
+        "aadProfileEnableAzureRBAC": {
+            "defaultValue": false,
+            "type": "bool",
+            "metadata": {
+                "description": "Specifies whether to  to enable Azure RBAC for Kubernetes authorization."
+            }
+        },
+        "systemNodePoolName": {
+            "defaultValue": "system",
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the unique name of of the system node pool profile in the context of the subscription and resource group."
+            }
+        },
+        "systemNodePoolVmSize": {
+            "defaultValue": "Standard_a2_v2",
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the vm size of nodes in the system node pool."
+            }
+        },
+        "systemNodePoolOsDiskSizeGB": {
+            "defaultValue": 100,
+            "type": "int",
+            "metadata": {
+                "description": "Specifies the OS Disk Size in GB to be used to specify the disk size for every machine in the system agent pool. If you specify 0, it will apply the default osDisk size according to the vmSize specified.."
+            }
+        },
+        "systemNodePoolAgentCount": {
+            "defaultValue": 2,
+            "type": "int",
+            "metadata": {
+                "description": "Specifies the number of agents (VMs) to host docker containers in the system node pool. Allowed values must be in the range of 1 to 100 (inclusive). The default value is 1."
+            }
+        },
+        "systemNodePoolOsType": {
+            "defaultValue": "Linux",
+            "type": "string",
+            "allowedValues": [
+                "Linux",
+                "Windows"
+            ],
+            "metadata": {
+                "description": "Specifies the OS type for the vms in the system node pool. Choose from Linux and Windows. Default to Linux."
+            }
+        },
+        "systemNodePoolMaxPods": {
+            "defaultValue": 30,
+            "type": "int",
+            "metadata": {
+                "description": "Specifies the maximum number of pods that can run on a node in the system node pool. The maximum number of pods per node in an AKS cluster is 250. The default maximum number of pods per node varies between kubenet and Azure CNI networking, and the method of cluster deployment."
+            }
+        },
+        "systemNodePoolMaxCount": {
+            "defaultValue": 5,
+            "type": "int",
+            "metadata": {
+                "description": "Specifies the maximum number of nodes for auto-scaling for the system node pool."
+            }
+        },
+        "systemNodePoolMinCount": {
+            "defaultValue": 1,
+            "type": "int",
+            "metadata": {
+                "description": "Specifies the minimum number of nodes for auto-scaling for the system node pool."
+            }
+        },
+        "systemNodePoolEnableAutoScaling": {
+            "defaultValue": true,
+            "type": "bool",
+            "metadata": {
+                "description": "Specifies whether to enable auto-scaling for the system node pool."
+            }
+        },
+        "systemNodePoolScaleSetPriority": {
+            "defaultValue": "Regular",
+            "allowedValues": [
+                "Spot",
+                "Regular"
+            ],
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the virtual machine scale set priority in the system node pool: Spot or Regular."
+            }
+        },
+        "systemNodePoolScaleSetEvictionPolicy": {
+            "defaultValue": "Delete",
+            "allowedValues": [
+                "Delete",
+                "Deallocate"
+            ],
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the ScaleSetEvictionPolicy to be used to specify eviction policy for spot virtual machine scale set. Default to Delete. Allowed values are Delete or Deallocate."
+            }
+        },
+        "systemNodePoolNodeLabels": {
+            "defaultValue": {},
+            "type": "object",
+            "metadata": {
+                "description": "Specifies the Agent pool node labels to be persisted across all nodes in the system node pool."
+            }
+        },
+        "systemNodePoolNodeTaints": {
+            "defaultValue": [],
+            "type": "array",
+            "metadata": {
+                "description": "Specifies the taints added to new nodes during node pool create and scale. For example, key=value:NoSchedule. - string"
+            }
+        },
+        "systemNodePoolType": {
+            "defaultValue": "VirtualMachineScaleSets",
+            "type": "string",
+            "allowedValues": [
+                "VirtualMachineScaleSets",
+                "AvailabilitySet"
+            ],
+            "metadata": {
+                "description": "Specifies the type for the system node pool: VirtualMachineScaleSets or AvailabilitySet"
+            }
+        },
+        "systemNodePoolAvailabilityZones": {
+            "defaultValue": [],
+            "type": "array",
+            "metadata": {
+                "description": "Specifies the availability zones for the agent nodes in the system node pool. Requirese the use of VirtualMachineScaleSets as node pool type."
+            }
+        },
+        "userNodePoolName": {
+            "defaultValue": "vipnode",
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the unique name of of the user node pool profile in the context of the subscription and resource group."
+            }
+        },
+        "userNodePool2Name": {
+            "defaultValue": "vmsnode",
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the unique name of of the user node pool profile in the context of the subscription and resource group."
+            }
+        },
+        "userNodePool3Name": {
+            "defaultValue": "vaenode",
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the unique name of of the user node pool profile in the context of the subscription and resource group."
+            }
+        },
+        "userNodePoolVmSize": {
+            "defaultValue": "Standard_a2_v2",
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the vm size of nodes in the user node pool."
+            }
+        },
+        "userNodePoolOsDiskSizeGB": {
+            "defaultValue": 100,
+            "type": "int",
+            "metadata": {
+                "description": "Specifies the OS Disk Size in GB to be used to specify the disk size for every machine in the system agent pool. If you specify 0, it will apply the default osDisk size according to the vmSize specified.."
+            }
+        },
+        "userNodePoolAgentCount": {
+            "defaultValue": 3,
+            "type": "int",
+            "metadata": {
+                "description": "Specifies the number of agents (VMs) to host docker containers in the user node pool. Allowed values must be in the range of 1 to 100 (inclusive). The default value is 1."
+            }
+        },
+        "userNodePoolOsType": {
+            "defaultValue": "Linux",
+            "type": "string",
+            "allowedValues": [
+                "Linux",
+                "Windows"
+            ],
+            "metadata": {
+                "description": "Specifies the OS type for the vms in the user node pool. Choose from Linux and Windows. Default to Linux."
+            }
+        },
+        "userNodePoolMaxPods": {
+            "defaultValue": 10,
+            "type": "int",
+            "metadata": {
+                "description": "Specifies the maximum number of pods that can run on a node in the user node pool. The maximum number of pods per node in an AKS cluster is 250. The default maximum number of pods per node varies between kubenet and Azure CNI networking, and the method of cluster deployment."
+            }
+        },
+        "userNodePoolMaxCount": {
+            "defaultValue": 5,
+            "type": "int",
+            "metadata": {
+                "description": "Specifies the maximum number of nodes for auto-scaling for the user node pool."
+            }
+        },
+        "userNodePoolMinCount": {
+            "defaultValue": 3,
+            "type": "int",
+            "metadata": {
+                "description": "Specifies the minimum number of nodes for auto-scaling for the user node pool."
+            }
+        },
+        "userNodePoolEnableAutoScaling": {
+            "defaultValue": true,
+            "type": "bool",
+            "metadata": {
+                "description": "Specifies whether to enable auto-scaling for the user node pool."
+            }
+        },
+        "userNodePoolScaleSetPriority": {
+            "defaultValue": "Regular",
+            "allowedValues": [
+                "Spot",
+                "Regular"
+            ],
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the virtual machine scale set priority in the user node pool: Spot or Regular."
+            }
+        },
+        "userNodePoolScaleSetEvictionPolicy": {
+            "defaultValue": "Delete",
+            "allowedValues": [
+                "Delete",
+                "Deallocate"
+            ],
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the ScaleSetEvictionPolicy to be used to specify eviction policy for spot virtual machine scale set. Default to Delete. Allowed values are Delete or Deallocate."
+            }
+        },
+        "userNodePoolNodeLabels": {
+            "defaultValue": {},
+            "type": "object",
+            "metadata": {
+                "description": "Specifies the Agent pool node labels to be persisted across all nodes in the user node pool."
+            }
+        },
+        "userNodePoolNodeTaints": {
+            "defaultValue": [],
+            "type": "array",
+            "metadata": {
+                "description": "Specifies the taints added to new nodes during node pool create and scale. For example, key=value:NoSchedule. - string"
+            }
+        },
+        "userNodePoolType": {
+            "defaultValue": "VirtualMachineScaleSets",
+            "type": "string",
+            "allowedValues": [
+                "VirtualMachineScaleSets",
+                "AvailabilitySet"
+            ],
+            "metadata": {
+                "description": "Specifies the type for the user node pool: VirtualMachineScaleSets or AvailabilitySet"
+            }
+        },
+        "userNodePoolAvailabilityZones": {
+            "defaultValue": [],
+            "type": "array",
+            "metadata": {
+                "description": "Specifies the availability zones for the agent nodes in the user node pool. Requirese the use of VirtualMachineScaleSets as node pool type."
+            }
+        },
+        "httpApplicationRoutingEnabled": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Specifies whether the httpApplicationRouting add-on is enabled or not."
+            }
+        },
+        "aciConnectorLinuxEnabled": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Specifies whether the aciConnectorLinux add-on is enabled or not."
+            }
+        },
+        "azurePolicyEnabled": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Specifies whether the azurepolicy add-on is enabled or not."
+            }
+        },
+        "kubeDashboardEnabled": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Specifies whether the kubeDashboard add-on is enabled or not."
+            }
+        },
+        "podIdentityProfileEnabled": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Specifies whether the pod identity addon is enabled.."
+            }
+        },
+        "autoScalerProfileScanInterval": {
+            "type": "string",
+            "defaultValue": "10s",
+            "metadata": {
+                "description": "Specifies the scan interval of the auto-scaler of the AKS cluster."
+            }
+        },
+        "autoScalerProfileScaleDownDelayAfterAdd": {
+            "type": "string",
+            "defaultValue": "10m",
+            "metadata": {
+                "description": "Specifies the scale down delay after add of the auto-scaler of the AKS cluster."
+            }
+        },
+        "autoScalerProfileScaleDownDelayAfterDelete": {
+            "type": "string",
+            "defaultValue": "20s",
+            "metadata": {
+                "description": "Specifies the scale down delay after delete of the auto-scaler of the AKS cluster."
+            }
+        },
+        "autoScalerProfileScaleDownDelayAfterFailure": {
+            "type": "string",
+            "defaultValue": "3m",
+            "metadata": {
+                "description": "Specifies scale down delay after failure of the auto-scaler of the AKS cluster."
+            }
+        },
+        "autoScalerProfileScaleDownUnneededTime": {
+            "type": "string",
+            "defaultValue": "10m",
+            "metadata": {
+                "description": "Specifies the scale down unneeded time of the auto-scaler of the AKS cluster."
+            }
+        },
+        "autoScalerProfileScaleDownUnreadyTime": {
+            "type": "string",
+            "defaultValue": "20m",
+            "metadata": {
+                "description": "Specifies the scale down unready time of the auto-scaler of the AKS cluster."
+            }
+        },
+        "autoScalerProfileUtilizationThreshold": {
+            "type": "string",
+            "defaultValue": "0.5",
+            "metadata": {
+                "description": "Specifies the utilization threshold of the auto-scaler of the AKS cluster."
+            }
+        },
+        "autoScalerProfileMaxGracefulTerminationSec": {
+            "type": "string",
+            "defaultValue": "600",
+            "metadata": {
+                "description": "Specifies the max graceful termination time interval in seconds for the auto-scaler of the AKS cluster."
+            }
+        },
+        "keyVaultPrivateEndpointName": {
+            "type": "string",
+            "defaultValue": "KeyVaultPrivateEndpoint",
+            "metadata": {
+                "description": "Specifies the name of the private link to the Key Vault."
+            }
+        },
+        "keyVaultName": {
+            "type": "string",
+            "defaultValue": "keyv-n-avip-nmzmt-01",
+            "metadata": {
+                "description": "Specifies the name of the Key Vault resource."
+            }
+        },
+        "keyVaultNetworkRuleSetDefaultAction": {
+            "type": "string",
+            "defaultValue": "Deny",
+            "allowedValues": [
+                "Allow",
+                "Deny"
+            ],
+            "metadata": {
+                "description": "The default action of allow or deny when no other rules match. Allowed values: Allow or Deny"
+            }
+        },
+        "applicationGatewayName": {
+            "type": "string",
+            "defaultValue": "agw-1-avip-nizgt-01",
+            "metadata": {
+                "description": "Specifies the name of the Application Gateway."
+            }
+        },
+        "applicationGatewayZones": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Specifies the availability zones of the Application Gateway."
+            }
+        },
+        "wafPolicyName": {
+            "type": "String",
+            "defaultValue": "[concat(parameters('applicationGatewayName'), 'WafPolicy')]",
+            "metadata": {
+                "description": "Specifies the name of the WAF policy"
+            }
+        },
+        "wafPolicyMode": {
+            "type": "string",
+            "defaultValue": "Prevention",
+            "allowedValues": [
+                "Detection",
+                "Prevention"
+            ],
+            "metadata": {
+                "description": "Specifies the mode of the WAF policy."
+            }
+        },
+        "wafPolicyState": {
+            "type": "string",
+            "defaultValue": "Enabled",
+            "allowedValues": [
+                "Enabled",
+                "Disabled "
+            ],
+            "metadata": {
+                "description": "Specifies the state of the WAF policy."
+            }
+        },
+        "wafPolicyFileUploadLimitInMb": {
+            "type": "int",
+            "defaultValue": 100,
+            "metadata": {
+                "description": "Specifies the maximum file upload size in Mb for the WAF policy."
+            }
+        },
+        "wafPolicyMaxRequestBodySizeInKb": {
+            "type": "int",
+            "defaultValue": 128,
+            "metadata": {
+                "description": "Specifies the maximum request body size in Kb for the WAF policy."
+            }
+        },
+        "wafPolicyRequestBodyCheck": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Specifies the whether to allow WAF to check request Body."
+            }
+        },
+        "wafPolicyRuleSetType": {
+            "type": "string",
+            "defaultValue": "OWASP",
+            "metadata": {
+                "description": "Specifies the rule set type."
+            }
+        },
+        "wafPolicyRuleSetVersion": {
+            "type": "string",
+            "defaultValue": "3.1",
+            "metadata": {
+                "description": "Specifies the rule set version."
+            }
+        },
+        "aksClusterPodCidr": {
+            "defaultValue": "10.244.0.0/16",
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the CIDR notation IP range from which to assign pod IPs when kubenet is used."
+            }
+        },
+        "aksClusterServiceCidr": {
+            "defaultValue": "10.3.0.0/16",
+            "type": "string",
+            "metadata": {
+                "description": "A CIDR notation IP range from which to assign service cluster IPs. It must not overlap with any Subnet IP ranges."
+            }
+        },
+        "aksClusterDnsServiceIP": {
+            "defaultValue": "10.3.0.10",
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the IP address assigned to the Kubernetes DNS service. It must be within the Kubernetes service address range specified in serviceCidr."
+            }
+        },
+        "aksClusterDockerBridgeCidr": {
+            "defaultValue": "172.17.0.1/16",
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the CIDR notation IP range assigned to the Docker bridge network. It must not overlap with any Subnet IP ranges or the Kubernetes service address range."
+            }
+        }
+    },
+    "variables": {
+        "vNetHubPrefix": "100.0.0.0/16",
+        "eventHubNamespaceName": "[format('{0}ns', parameters('EventHubprojectName'))]",
+        "eventHubName": "[parameters('EventHubprojectName')]",
+        "vmSubnetNsgName": "[concat(parameters('vmSubnetName'), 'Nsg')]",
+        "vmSubnetNsgId": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('vmSubnetNsgName'))]",
+        "vmSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vNetSpokeName'), parameters('vmSubnetName'))]",
+        "readerRoleDefinitionName": "acdd72a7-3385-48ef-bd42-f606fba81ae7",
+        "contributorRoleDefinitionName": "b24988ac-6180-42a0-ab88-20f7382dd24c",
+        "aksClusterUserDefinedManagedIdentityName": "[concat(parameters('aksClusterName'), 'ManagedIdentity')]",
+        "aksClusterUserDefinedManagedIdentityId": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities',variables('aksClusterUserDefinedManagedIdentityName'))]",
+        "applicationGatewayUserDefinedManagedIdentityName": "[concat(parameters('applicationGatewayName'), 'ManagedIdentity')]",
+        "applicationGatewayUserDefinedManagedIdentityId": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities',variables('applicationGatewayUserDefinedManagedIdentityName'))]",
+        "aadPodIdentityUserDefinedManagedIdentityName": "[concat(parameters('aksClusterName'), 'AadPodManagedIdentity')]",
+        "aadPodIdentityUserDefinedManagedIdentityId": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities',variables('aadPodIdentityUserDefinedManagedIdentityName'))]",
+        "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vNetSpokeName'))]",
+        "aksSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vNetSpokeName'), parameters('aksSubnetName'))]",
+        "applicationGatewaySubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vNetSpokeName'), parameters('applicationGatewaySubnetName'))]",
+        "readerRoleId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('readerRoleDefinitionName'))]",
+        "contributorRoleId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', variables('contributorRoleDefinitionName'))]",
+        "aksContributorRoleAssignmentName": "[guid(concat(resourceGroup().id, variables('aksClusterUserDefinedManagedIdentityName'), parameters('aksClusterName')))]",
+        "aksContributorRoleAssignmentId": "[resourceId('Microsoft.Authorization/roleAssignments', variables('aksContributorRoleAssignmentName'))]",
+        "appGwContributorRoleAssignmentName": "[guid(concat(resourceGroup().id, variables('applicationGatewayUserDefinedManagedIdentityName'), parameters('applicationGatewayName')))]",
+        "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', parameters('aksClusterName'))]",
+        "keyVaultPublicDNSZoneForwarder": "[if(equals(toLower(environment().name), 'azureusgovernment'), '.vaultcore.usgovcloudapi.net', '.vaultcore.azure.net')]",
+        "keyVaultPrivateDnsZoneName": "[concat('privatelink', variables('keyVaultPublicDNSZoneForwarder'))]",
+        "keyVaultPrivateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', variables('keyVaultPrivateDnsZoneName'))]",
+        "keyVaultPrivateEndpointId": "[resourceId('Microsoft.Network/privateEndpoints', parameters('keyVaultPrivateEndpointName'))]",
+        "keyVaultPrivateEndpointGroupName": "vault",
+        "keyVaultPrivateDnsZoneGroupName": "[concat(variables('keyVaultPrivateEndpointGroupName'), 'PrivateDnsZoneGroup')]",
+        "keyVaultPrivateDnsZoneGroupId": "[resourceId('Microsoft.Network/privateEndpoints/privateDnsZoneGroups', parameters('keyVaultPrivateEndpointName'), concat(variables('keyVaultPrivateEndpointGroupName'), 'PrivateDnsZoneGroup'))]",
+        "keyVaultId": "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+        "wafPolicyId": "[resourceId('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies', parameters('wafPolicyName'))]",
+        "applicationGatewayId": "[resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName'))]",
+        "applicationGatewayPublicIPAddressName": "[concat(parameters('applicationGatewayName'), 'PublicIp')]",
+        "applicationGatewayPublicIPAddressId": "[resourceId('Microsoft.Network/publicIPAddresses', variables('applicationGatewayPublicIPAddressName'))]",
+        "applicationGatewayIPConfigurationName": "applicationGatewayIPConfiguration",
+        "applicationGatewayFrontendIPConfigurationName": "applicationGatewayFrontendIPConfiguration",
+        "applicationGatewayFrontendIPConfigurationId": "[resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', parameters('applicationGatewayName'), variables('applicationGatewayFrontendIPConfigurationName'))]",
+        "applicationGatewayFrontendPortName": "applicationGatewayFrontendPort",
+        "applicationGatewayFrontendPortId": "[resourceId('Microsoft.Network/applicationGateways/frontendPorts', parameters('applicationGatewayName'), variables('applicationGatewayFrontendPortName'))]",
+        "applicationGatewayHttpListenerName": "applicationGatewayHttpListener",
+        "applicationGatewayHttpListenerId": "[resourceId('Microsoft.Network/applicationGateways/httpListeners', parameters('applicationGatewayName'), variables('applicationGatewayHttpListenerName'))]",
+        "applicationGatewayBackendAddressPoolName": "applicationGatewayBackendPool",
+        "applicationGatewayBackendAddressPoolId": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools', parameters('applicationGatewayName'), variables('applicationGatewayBackendAddressPoolName'))]",
+        "applicationGatewayBackendHttpSettingsName": "applicationGatewayBackendHttpSettings",
+        "applicationGatewayBackendHttpSettingsId": "[resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', parameters('applicationGatewayName'), variables('applicationGatewayBackendHttpSettingsName'))]",
+        "applicationGatewayRequestRoutingRuleName": "default",
+        "aadProfileConfiguration": {
+            "managed": "[parameters('aadProfileManaged')]",
+            "enableAzureRBAC": "[parameters('aadProfileEnableAzureRBAC')]",
+            "adminGroupObjectIDs": "[parameters('aadProfileAdminGroupObjectIDs')]",
+            "tenantID": "[parameters('aadProfileTenantId')]"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2023-03-15-preview",
+            "kind": "GlobalDocumentDB",
+            "type": "Microsoft.DocumentDb/databaseAccounts",
+            "name": "[parameters('CosmosDBname')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "databaseAccountOfferType": "Standard",
+                "locations": [
+                    {
+                        "id": "[concat(parameters('CosmosDBname'), '-', parameters('location'))]",
+                        "failoverPriority": 0,
+                        "locationName": "[parameters('CosmosDBlocationName')]"
+                    }
+                ],
+                "backupPolicy": {
+                    "type": "Periodic",
+                    "periodicModeProperties": {
+                        "backupIntervalInMinutes": 1440,
+                        "backupRetentionIntervalInHours": 48,
+                        "backupStorageRedundancy": "Local"
+                    }
+                },
+                "isVirtualNetworkFilterEnabled": false,
+                "virtualNetworkRules": [],
+                "ipRules": [],
+                "dependsOn": [],
+                "minimalTlsVersion": "Tls12",
+                "enableMultipleWriteLocations": false,
+                "capabilities": [],
+                "enableFreeTier": true,
+                "capacity": {
+                    "totalThroughputLimit": 1000
+                }
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces",
+            "apiVersion": "2021-11-01",
+            "name": "[variables('eventHubNamespaceName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "[parameters('eventHubSku')]",
+                "tier": "[parameters('eventHubSku')]",
+                "capacity": 1
+            },
+            "properties": {
+                "isAutoInflateEnabled": false,
+                "maximumThroughputUnits": 0
+            }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/eventhubs",
+            "apiVersion": "2021-11-01",
+            "name": "[format('{0}/{1}', variables('eventHubNamespaceName'), variables('eventHubName'))]",
+            "properties": {
+                "messageRetentionInDays": 7,
+                "partitionCount": 1
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', variables('eventHubNamespaceName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Cache/Redis",
+            "apiVersion": "2023-05-01-preview",
+            "name": "[parameters('Redis_Name')]",
+            "location": "Southeast Asia",
+            "properties": {
+                "redisVersion": "6.0",
+                "sku": {
+                    "name": "Standard",
+                    "family": "C",
+                    "capacity": 1
+                },
+                "enableNonSslPort": false,
+                "publicNetworkAccess": "Enabled",
+                "redisConfiguration": {
+                    "maxmemory-reserved": "125",
+                    "maxfragmentationmemory-reserved": "125",
+                    "maxmemory-delta": "125"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.DBforPostgreSQL/servers",
+            "apiVersion": "2017-12-01",
+            "name": "[parameters('PostgreSQLserverName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "[parameters('skuName')]",
+                "tier": "[parameters('skuTier')]",
+                "capacity": "[parameters('skuCapacity')]",
+                "size": "[format('{0}', parameters('skuSizeMB'))]",
+                "family": "[parameters('skuFamily')]"
+            },
+            "properties": {
+                "createMode": "Default",
+                "version": "[parameters('postgresqlVersion')]",
+                "administratorLogin": "[parameters('administratorLogin')]",
+                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+                "storageProfile": {
+                    "storageMB": "[parameters('skuSizeMB')]",
+                    "backupRetentionDays": "[parameters('backupRetentionDays')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "[parameters('storageAccount_sku_name')]"
+            },
+            "kind": "[parameters('storageAccount_kind')]",
+            "name": "[parameters('storageAccount_name')]",
+            "apiVersion": "2017-10-01",
+            "location": "[parameters('location')]",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": false,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "enabled": true
+                        },
+                        "blob": {
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "[parameters('storageAccount_access_tier')]"
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('storageAccount_name'),'/default/', parameters('storageContainer_name'))]",
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2018-07-01",
+            "properties": {
+                "publicAccess": "None"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccount_name'))]"
+            ]
+        },
+        {
+            "apiVersion": "2020-07-01",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('vmSubnetNsgName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "AllowSshInbound",
+                        "properties": {
+                            "priority": 100,
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "destinationPortRange": "22",
+                            "protocol": "Tcp",
+                            "sourceAddressPrefix": "*",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2021-05-01",
+            "name": "[parameters('vNetSpokeName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[variables('vmSubnetNsgId')]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('vNetSpokePrefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('aksSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('aksSubnetAddressPrefix')]",
+                            "privateEndpointNetworkPolicies": "Disabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "[parameters('vmSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('vmSubnetAddressPrefix')]",
+                            "networkSecurityGroup": {
+                                "id": "[variables('vmSubnetNsgId')]"
+                            },
+                            "privateEndpointNetworkPolicies": "Disabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "[parameters('applicationGatewaySubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('applicationGatewaySubnetAddressPrefix')]",
+                            "privateEndpointNetworkPolicies": "Disabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+            "apiVersion": "2022-07-01",
+            "name": "[format('{0}/{1}', parameters('vNetHubName'), format('peering-to-{0}', parameters('vNetSpokeName')))]",
+            "properties": {
+                "allowVirtualNetworkAccess": true,
+                "allowForwardedTraffic": false,
+                "allowGatewayTransit": false,
+                "useRemoteGateways": false,
+                "remoteVirtualNetwork": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vNetSpokeName'))]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vNetSpokeName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+            "apiVersion": "2022-07-01",
+            "name": "[format('{0}/{1}', parameters('vNetSpokeName'), format('peering-to-{0}', parameters('vNetHubName')))]",
+            "properties": {
+                "allowVirtualNetworkAccess": true,
+                "allowForwardedTraffic": false,
+                "allowGatewayTransit": false,
+                "useRemoteGateways": false,
+                "remoteVirtualNetwork": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vNetHubName'))]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vNetHubName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vNetSpokeName'))]"
+            ]
+        },
+        {
+            "comments": "User-Defined Managed Identity defined for the AKS cluster. Used to access the Virtual Network and other resources.",
+            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+            "name": "[variables('aksClusterUserDefinedManagedIdentityName')]",
+            "apiVersion": "2023-01-31",
+            "location": "[parameters('location')]"
+        },
+        {
+            "comments": "User-Defined Managed Identity used by the Application Gateway is assigned. Used to access Azure Key Vault.",
+            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+            "apiVersion": "2023-01-31",
+            "name": "[variables('applicationGatewayUserDefinedManagedIdentityName')]",
+            "location": "[parameters('location')]"
+        },
+        {
+            "comments": "User-Defined Managed Identity used by an AAD Pod Identity. Used to access Azure Key Vault.",
+            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+            "apiVersion": "2023-01-31",
+            "name": "[variables('aadPodIdentityUserDefinedManagedIdentityName')]",
+            "location": "[parameters('location')]"
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-01-01-preview",
+            "name": "[variables('aksContributorRoleAssignmentName')]",
+            "dependsOn": [
+                "[variables('aksClusterUserDefinedManagedIdentityId')]",
+                "[variables('virtualNetworkId')]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[variables('contributorRoleId')]",
+                "description": "Assign the cluster user-defined managed identity contributor role on the resource group.",
+                "principalId": "[reference(variables('aksClusterUserDefinedManagedIdentityName')).principalId]",
+                "principalType": "ServicePrincipal",
+                "scope": "[resourceGroup().id]"
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2019-09-01",
+            "name": "[parameters('keyVaultName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[variables('applicationGatewayUserDefinedManagedIdentityId')]",
+                "[variables('aadPodIdentityUserDefinedManagedIdentityId')]"
+            ],
+            "properties": {
+                "accessPolicies": [
+                    {
+                        "tenantId": "[reference(variables('applicationGatewayUserDefinedManagedIdentityId')).tenantId]",
+                        "objectId": "[reference(variables('applicationGatewayUserDefinedManagedIdentityId')).principalId]",
+                        "permissions": {
+                            "secrets": [
+                                "get",
+                                "list"
+                            ],
+                            "certificates": [
+                                "get"
+                            ]
+                        }
+                    },
+                    {
+                        "tenantId": "[reference(variables('aadPodIdentityUserDefinedManagedIdentityId')).tenantId]",
+                        "objectId": "[reference(variables('aadPodIdentityUserDefinedManagedIdentityId')).principalId]",
+                        "permissions": {
+                            "secrets": [
+                                "get",
+                                "list"
+                            ],
+                            "certificates": [
+                                "get"
+                            ]
+                        }
+                    }
+                ],
+                "sku": {
+                    "family": "A",
+                    "name": "standard"
+                },
+                "tenantId": "[subscription().tenantId]",
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "defaultAction": "[parameters('keyVaultNetworkRuleSetDefaultAction')]"
+                },
+                "enabledForDeployment": false,
+                "enabledForDiskEncryption": false,
+                "enabledForTemplateDeployment": false,
+                "enableSoftDelete": false
+            },
+            "resources": [
+                {
+                    "comments": "Grant the AKS cluster ingress controller pod managed identity with reader role permissions over Key Vault; paired with the Access Policy, this allows our ingress controller to pull certificates.",
+                    "type": "providers/roleAssignments",
+                    "apiVersion": "2022-01-01-preview",
+                    "name": "[concat('Microsoft.Authorization/', guid(concat(resourceGroup().id), variables('readerRoleId')))]",
+                    "dependsOn": [
+                        "[variables('keyVaultId')]",
+                        "[variables('aadPodIdentityUserDefinedManagedIdentityId')]"
+                    ],
+                    "properties": {
+                        "roleDefinitionId": "[variables('readerRoleId')]",
+                        "principalId": "[reference(variables('aadPodIdentityUserDefinedManagedIdentityId')).principalId]",
+                        "principalType": "ServicePrincipal"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.ContainerService/managedClusters",
+            "apiVersion": "2020-12-01",
+            "name": "[parameters('aksClusterName')]",
+            "location": "[parameters('location')]",
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "[variables('aksClusterUserDefinedManagedIdentityId')]": {}
+                }
+            },
+            "tags": "[parameters('aksClusterTags')]",
+            "dependsOn": [
+                "[variables('virtualNetworkId')]",
+                "[variables('keyVaultPrivateDnsZoneGroupId')]",
+                "[variables('applicationGatewayId')]",
+                "[variables('aksContributorRoleAssignmentId')]"
+            ],
+            "properties": {
+                "kubernetesVersion": "[parameters('aksClusterKubernetesVersion')]",
+                "dnsPrefix": "[parameters('aksClusterDnsPrefix')]",
+                "sku": {
+                    "name": "Basic",
+                    "tier": "[parameters('aksClusterSkuTier')]"
+                },
+                "agentPoolProfiles": [
+                    {
+                        "name": "[tolower(parameters('systemNodePoolName'))]",
+                        "count": "[parameters('systemNodePoolAgentCount')]",
+                        "vmSize": "[parameters('systemNodePoolVmSize')]",
+                        "osDiskSizeGB": "[parameters('systemNodePoolOsDiskSizeGB')]",
+                        "vnetSubnetID": "[variables('aksSubnetId')]",
+                        "maxPods": "[parameters('systemNodePoolMaxPods')]",
+                        "osType": "[parameters('systemNodePoolOsType')]",
+                        "maxCount": "[parameters('systemNodePoolMaxCount')]",
+                        "minCount": "[parameters('systemNodePoolMinCount')]",
+                        "scaleSetPriority": "[parameters('systemNodePoolScaleSetPriority')]",
+                        "scaleSetEvictionPolicy": "[parameters('systemNodePoolScaleSetEvictionPolicy')]",
+                        "enableAutoScaling": "[parameters('systemNodePoolEnableAutoScaling')]",
+                        "mode": "System",
+                        "type": "[parameters('systemNodePoolType')]",
+                        "availabilityZones": "[parameters('systemNodePoolAvailabilityZones')]",
+                        "nodeLabels": "[parameters('systemNodePoolNodeLabels')]",
+                        "nodeTaints": "[parameters('systemNodePoolNodeTaints')]"
+                    },
+                    {
+                        "name": "[tolower(parameters('userNodePoolName'))]",
+                        "count": "[parameters('userNodePoolAgentCount')]",
+                        "vmSize": "[parameters('userNodePoolVmSize')]",
+                        "osDiskSizeGB": "[parameters('userNodePoolOsDiskSizeGB')]",
+                        "vnetSubnetID": "[variables('aksSubnetId')]",
+                        "maxPods": "[parameters('userNodePoolMaxPods')]",
+                        "osType": "[parameters('userNodePoolOsType')]",
+                        "maxCount": "[parameters('userNodePoolMaxCount')]",
+                        "minCount": "[parameters('userNodePoolMinCount')]",
+                        "scaleSetPriority": "[parameters('userNodePoolScaleSetPriority')]",
+                        "scaleSetEvictionPolicy": "[parameters('userNodePoolScaleSetEvictionPolicy')]",
+                        "enableAutoScaling": "[parameters('userNodePoolEnableAutoScaling')]",
+                        "mode": "User",
+                        "type": "[parameters('userNodePoolType')]",
+                        "availabilityZones": "[parameters('userNodePoolAvailabilityZones')]",
+                        "nodeLabels": "[parameters('userNodePoolNodeLabels')]",
+                        "nodeTaints": "[parameters('userNodePoolNodeTaints')]"
+                    },
+                    {
+                        "name": "[tolower(parameters('userNodePool2Name'))]",
+                        "count": "[parameters('userNodePoolAgentCount')]",
+                        "vmSize": "[parameters('userNodePoolVmSize')]",
+                        "osDiskSizeGB": "[parameters('userNodePoolOsDiskSizeGB')]",
+                        "vnetSubnetID": "[variables('aksSubnetId')]",
+                        "maxPods": "[parameters('userNodePoolMaxPods')]",
+                        "osType": "[parameters('userNodePoolOsType')]",
+                        "maxCount": "[parameters('userNodePoolMaxCount')]",
+                        "minCount": "[parameters('userNodePoolMinCount')]",
+                        "scaleSetPriority": "[parameters('userNodePoolScaleSetPriority')]",
+                        "scaleSetEvictionPolicy": "[parameters('userNodePoolScaleSetEvictionPolicy')]",
+                        "enableAutoScaling": "[parameters('userNodePoolEnableAutoScaling')]",
+                        "mode": "User",
+                        "type": "[parameters('userNodePoolType')]",
+                        "availabilityZones": "[parameters('userNodePoolAvailabilityZones')]",
+                        "nodeLabels": "[parameters('userNodePoolNodeLabels')]",
+                        "nodeTaints": "[parameters('userNodePoolNodeTaints')]"
+                    },
+                    {
+                        "name": "[tolower(parameters('userNodePool3Name'))]",
+                        "count": "[parameters('userNodePoolAgentCount')]",
+                        "vmSize": "[parameters('userNodePoolVmSize')]",
+                        "osDiskSizeGB": "[parameters('userNodePoolOsDiskSizeGB')]",
+                        "vnetSubnetID": "[variables('aksSubnetId')]",
+                        "maxPods": "[parameters('userNodePoolMaxPods')]",
+                        "osType": "[parameters('userNodePoolOsType')]",
+                        "maxCount": "[parameters('userNodePoolMaxCount')]",
+                        "minCount": "[parameters('userNodePoolMinCount')]",
+                        "scaleSetPriority": "[parameters('userNodePoolScaleSetPriority')]",
+                        "scaleSetEvictionPolicy": "[parameters('userNodePoolScaleSetEvictionPolicy')]",
+                        "enableAutoScaling": "[parameters('userNodePoolEnableAutoScaling')]",
+                        "mode": "User",
+                        "type": "[parameters('userNodePoolType')]",
+                        "availabilityZones": "[parameters('userNodePoolAvailabilityZones')]",
+                        "nodeLabels": "[parameters('userNodePoolNodeLabels')]",
+                        "nodeTaints": "[parameters('userNodePoolNodeTaints')]"
+                    }
+                ],
+                "linuxProfile": {
+                    "adminUsername": "[parameters('aksClusterAdminUsername')]",
+                    "ssh": {
+                        "publicKeys": [
+                            {
+                                "keyData": "[parameters('aksClusterSshPublicKey')]"
+                            }
+                        ]
+                    }
+                },
+                "addonProfiles": {
+                    "httpApplicationRouting": {
+                        "enabled": "[parameters('httpApplicationRoutingEnabled')]"
+                    },
+                    "aciConnectorLinux": {
+                        "enabled": "[parameters('aciConnectorLinuxEnabled')]"
+                    },
+                    "azurepolicy": {
+                        "enabled": "[parameters('azurePolicyEnabled')]",
+                        "config": {
+                            "version": "v2"
+                        }
+                    },
+                    "kubeDashboard": {
+                        "enabled": "[parameters('kubeDashboardEnabled')]"
+                    },
+                    "ingressApplicationGateway": {
+                        "config": {
+                            "applicationGatewayId": "[variables('applicationGatewayId')]"
+                        },
+                        "enabled": true,
+                        "identity": {
+                            "clientId": "[reference(variables('applicationGatewayUserDefinedManagedIdentityId')).clientId]",
+                            "objectId": "[reference(variables('applicationGatewayUserDefinedManagedIdentityId')).principalId]",
+                            "resourceId": "[variables('applicationGatewayUserDefinedManagedIdentityId')]"
+                        }
+                    }
+                },
+                "podIdentityProfile": {
+                    "enabled": "[parameters('podIdentityProfileEnabled')]"
+                },
+                "enableRBAC": true,
+                "networkProfile": {
+                    "networkPlugin": "[parameters('aksClusterNetworkPlugin')]",
+                    "networkPolicy": "[parameters('aksClusterNetworkPolicy')]",
+                    "podCidr": "[parameters('aksClusterPodCidr')]",
+                    "serviceCidr": "[parameters('aksClusterServiceCidr')]",
+                    "dnsServiceIP": "[parameters('aksClusterDnsServiceIP')]",
+                    "dockerBridgeCidr": "[parameters('aksClusterDockerBridgeCidr')]",
+                    "outboundType": "[parameters('aksClusterOutboundType')]",
+                    "loadBalancerSku": "[parameters('aksClusterLoadBalancerSku')]",
+                    "loadBalancerProfile": "[json('null')]"
+                },
+                "aadProfile": "[if(parameters('aadEnabled'), variables('aadProfileConfiguration'), json('null'))]",
+                "autoScalerProfile": {
+                    "scan-interval": "[parameters('autoScalerProfileScanInterval')]",
+                    "scale-down-delay-after-add": "[parameters('autoScalerProfileScaleDownDelayAfterAdd')]",
+                    "scale-down-delay-after-delete": "[parameters('autoScalerProfileScaleDownDelayAfterDelete')]",
+                    "scale-down-delay-after-failure": "[parameters('autoScalerProfileScaleDownDelayAfterFailure')]",
+                    "scale-down-unneeded-time": "[parameters('autoScalerProfileScaleDownUnneededTime')]",
+                    "scale-down-unready-time": "[parameters('autoScalerProfileScaleDownUnreadyTime')]",
+                    "scale-down-utilization-threshold": "[parameters('autoScalerProfileUtilizationThreshold')]",
+                    "max-graceful-termination-sec": "[parameters('autoScalerProfileMaxGracefulTerminationSec')]"
+                },
+                "apiServerAccessProfile": {
+                    "enablePrivateCluster": "[parameters('aksClusterEnablePrivateCluster')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2020-06-01",
+            "name": "[variables('keyVaultPrivateDnsZoneName')]",
+            "location": "global",
+            "properties": {
+                "maxNumberOfRecordSets": 25000,
+                "maxNumberOfVirtualNetworkLinks": 1000,
+                "maxNumberOfVirtualNetworkLinksWithRegistration": 100
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+            "apiVersion": "2020-06-01",
+            "name": "[concat(variables('keyVaultPrivateDnsZoneName'), '/link_to_', toLower(parameters('vNetSpokeName')))]",
+            "location": "global",
+            "dependsOn": [
+                "[variables('keyVaultPrivateDnsZoneId')]",
+                "[variables('virtualNetworkId')]"
+            ],
+            "properties": {
+                "registrationEnabled": false,
+                "virtualNetwork": {
+                    "id": "[variables('virtualNetworkId')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2020-07-01",
+            "name": "[parameters('keyVaultPrivateEndpointName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[variables('virtualNetworkId')]",
+                "[variables('keyVaultId')]"
+            ],
+            "properties": {
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[parameters('keyVaultPrivateEndpointName')]",
+                        "properties": {
+                            "privateLinkServiceId": "[variables('keyVaultId')]",
+                            "groupIds": [
+                                "[variables('keyVaultPrivateEndpointGroupName')]"
+                            ]
+                        }
+                    }
+                ],
+                "subnet": {
+                    "id": "[variables('vmSubnetId')]"
+                }
+            },
+            "resources": [
+                {
+                    "type": "privateDnsZoneGroups",
+                    "apiVersion": "2020-07-01",
+                    "name": "[variables('keyVaultPrivateDnsZoneGroupName')]",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[variables('keyVaultId')]",
+                        "[variables('keyVaultPrivateDnsZoneId')]",
+                        "[variables('keyVaultPrivateEndpointId')]"
+                    ],
+                    "properties": {
+                        "privateDnsZoneConfigs": [
+                            {
+                                "name": "dnsConfig",
+                                "properties": {
+                                    "privateDnsZoneId": "[variables('keyVaultPrivateDnsZoneId')]"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "apiVersion": "2020-05-01",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('applicationGatewayPublicIPAddressName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static"
+            }
+        },
+        {
+            "type": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+            "apiVersion": "2021-02-01",
+            "name": "[parameters('wafPolicyName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "customRules": [
+                    {
+                        "name": "BlockEvilBot",
+                        "priority": 2,
+                        "ruleType": "MatchRule",
+                        "action": "Block",
+                        "matchConditions": [
+                            {
+                                "matchVariables": [
+                                    {
+                                        "variableName": "RequestHeaders",
+                                        "selector": "User-Agent"
+                                    }
+                                ],
+                                "operator": "Contains",
+                                "negationConditon": false,
+                                "matchValues": [
+                                    "evilbot"
+                                ],
+                                "transforms": [
+                                    "Lowercase"
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "policySettings": {
+                    "requestBodyCheck": "[parameters('wafPolicyRequestBodyCheck')]",
+                    "maxRequestBodySizeInKb": "[parameters('wafPolicyMaxRequestBodySizeInKb')]",
+                    "fileUploadLimitInMb": "[parameters('wafPolicyFileUploadLimitInMb')]",
+                    "mode": "[parameters('wafPolicyMode')]",
+                    "state": "[parameters('wafPolicyState')]"
+                },
+                "managedRules": {
+                    "managedRuleSets": [
+                        {
+                            "ruleSetType": "[parameters('wafPolicyRuleSetType')]",
+                            "ruleSetVersion": "[parameters('wafPolicyRuleSetVersion')]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/applicationGateways",
+            "apiVersion": "2020-05-01",
+            "name": "[parameters('applicationGatewayName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[variables('keyVaultId')]",
+                "[variables('applicationGatewayPublicIPAddressId')]",
+                "[variables('virtualNetworkId')]",
+                "[variables('wafPolicyId')]"
+            ],
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "[variables('applicationGatewayUserDefinedManagedIdentityId')]": {}
+                }
+            },
+            "zones": "[parameters('applicationGatewayZones')]",
+            "properties": {
+                "sku": {
+                    "name": "WAF_v2",
+                    "tier": "WAF_v2"
+                },
+                "gatewayIPConfigurations": [
+                    {
+                        "name": "[variables('applicationGatewayIPConfigurationName')]",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('applicationGatewaySubnetId')]"
+                            }
+                        }
+                    }
+                ],
+                "frontendIPConfigurations": [
+                    {
+                        "name": "[variables('applicationGatewayFrontendIPConfigurationName')]",
+                        "properties": {
+                            "PublicIPAddress": {
+                                "id": "[variables('applicationGatewayPublicIPAddressId')]"
+                            }
+                        }
+                    }
+                ],
+                "frontendPorts": [
+                    {
+                        "name": "[variables('applicationGatewayFrontendPortName')]",
+                        "properties": {
+                            "Port": 80
+                        }
+                    }
+                ],
+                "autoscaleConfiguration": {
+                    "minCapacity": 0,
+                    "maxCapacity": 10
+                },
+                "enableHttp2": false,
+                "probes": [
+                    {
+                        "name": "defaultHttpProbe",
+                        "properties": {
+                            "protocol": "Http",
+                            "path": "/",
+                            "interval": 30,
+                            "timeout": 30,
+                            "unhealthyThreshold": 3,
+                            "pickHostNameFromBackendHttpSettings": true,
+                            "minServers": 0
+                        }
+                    },
+                    {
+                        "name": "defaultHttpsProbe",
+                        "properties": {
+                            "protocol": "Https",
+                            "path": "/",
+                            "interval": 30,
+                            "timeout": 30,
+                            "unhealthyThreshold": 3,
+                            "pickHostNameFromBackendHttpSettings": true,
+                            "minServers": 0
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "[variables('applicationGatewayBackendAddressPoolName')]"
+                    }
+                ],
+                "backendHttpSettingsCollection": [
+                    {
+                        "name": "[variables('applicationGatewayBackendHttpSettingsName')]",
+                        "properties": {
+                            "Port": 80,
+                            "Protocol": "Http",
+                            "CookieBasedAffinity": "Disabled"
+                        }
+                    }
+                ],
+                "httpListeners": [
+                    {
+                        "name": "[variables('applicationGatewayHttpListenerName')]",
+                        "properties": {
+                            "firewallPolicy": {
+                                "id": "[variables('wafPolicyId')]"
+                            },
+                            "FrontendIPConfiguration": {
+                                "id": "[variables('applicationGatewayFrontendIPConfigurationId')]"
+                            },
+                            "FrontendPort": {
+                                "id": "[variables('applicationGatewayFrontendPortId')]"
+                            },
+                            "Protocol": "Http"
+                        }
+                    }
+                ],
+                "requestRoutingRules": [
+                    {
+                        "Name": "[variables('applicationGatewayRequestRoutingRuleName')]",
+                        "properties": {
+                            "RuleType": "Basic",
+                            "httpListener": {
+                                "id": "[variables('applicationGatewayHttpListenerId')]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[variables('applicationGatewayBackendAddressPoolId')]"
+                            },
+                            "backendHttpSettings": {
+                                "id": "[variables('applicationGatewayBackendHttpSettingsId')]"
+                            }
+                        }
+                    }
+                ],
+                "webApplicationFirewallConfiguration": {
+                    "enabled": true,
+                    "firewallMode": "[parameters('wafPolicyMode')]",
+                    "ruleSetType": "[parameters('wafPolicyRuleSetType')]",
+                    "ruleSetVersion": "[parameters('wafPolicyRuleSetVersion')]",
+                    "requestBodyCheck": "[parameters('wafPolicyRequestBodyCheck')]",
+                    "maxRequestBodySizeInKb": "[parameters('wafPolicyMaxRequestBodySizeInKb')]",
+                    "fileUploadLimitInMb": "[parameters('wafPolicyFileUploadLimitInMb')]"
+                },
+                "firewallPolicy": {
+                    "id": "[variables('wafPolicyId')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-01-01-preview",
+            "name": "[variables('appGwContributorRoleAssignmentName')]",
+            "dependsOn": [
+                "[variables('aksClusterId')]",
+                "[variables('applicationGatewayId')]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[variables('contributorRoleId')]",
+                "principalId": "[reference(variables('aksClusterId'), '2020-12-01', 'Full').properties.addonProfiles.ingressApplicationGateway.identity.objectId]",
+                "principalType": "ServicePrincipal",
+                "scope": "[resourceGroup().id]"
+            }
+        }
+    ]
+}
